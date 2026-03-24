@@ -1,0 +1,186 @@
+,Name,EACN,SMILES
+0,1-Bromo-2-methylpropane,-3.3,CC(C)CBr
+1,1-Bromo-3-Methylpropane,-3.4,CCCCBr
+2,1-Chlorodecane,3.5,CCCCCCCCCCCl
+3,1-Chlorododecane,5.6,CCCCCCCCCCCCCl
+4,1-Chlorohexadecane,9.8,CCCCCCCCCCCCCCCCCl
+5,1-Chlorooctane,2.25,CCCCCCCCCl
+6,1-Chlorotetradecane,8.0,CCCCCCCCCCCCCCCl
+7,1-Decene,5.5,CCCCCCCCC=C
+8,1-Decyne,0.1,CCCCCCCCC#C
+9,1-Dodecene,8.1,CCCCCCCCCCC=C
+10,1-Dodecyne,2.0,CCCCCCCCCCC#C
+11,1-Methyl-1-Cyclohexene,0.4,CC1=CCCCC1
+12,1-Octadecene,14.2,CCCCCCCCCCCCCCCCC=C
+13,1-Octene,3.9,CCCCCCC=C
+14,1-Octyne,-1.8,CCCCCCC#C
+15,1-Phenyl-1-Cyclohexene,7.9,C1CCC(=CC1)c2ccccc2
+16,1-Tetradecyne,3.5,CCCCCCCCCCCCC#C
+17,"1,10-Dichlorodecane",6.3,ClCCCCCCCCCCCl
+18,"1,2-Dibutoxyethane",1.7,CCCCOCCOCCCC
+19,"1,2-Dimethylcyclohexane",3.25,CC1CCCCC1C
+20,"1,2,4-Trimethylbenzene",3.0,Cc1ccc(C)c(C)c1
+21,"1,3-Cyclohexadiene",-3.1,C1CC=CC=C1
+22,"1,4-Cyclohexadiene",-4.0,C1C=CCC=C1
+23,"1,4-Diethylbenzene",4.0,CCc1ccc(CC)cc1
+24,"1,4-Dimethylcyclohexane",4.55,CC1CCC(C)CC1
+25,"1,4-Dipropoxybutane",1.9,CCCOCCCCOCCC
+26,2-Decanone,-2.1,CCCCCCCCC(C)=O
+27,2-Dodecanone,-0.6,CCCCCCCCCCC(C)=O
+28,2-Methylheptane,8.0,CCCCCC(C)C
+29,2-Octanone,-3.4,CCCCCCC(C)=O
+30,2-PhenylacetoacetoNitrile,6.0,CC(=O)C(C#N)c1ccccc1
+31,2-Undecanone,-1.3,CCCCCCCCCC(C)=O
+32,"2,2,4-Trimethylpentane",8.0,CC(C)CC(C)(C)C
+33,"2,5-Dimethylhexane",8.0,CC(C)CCC(C)C
+34,"2,5-Norbornadiene",-3.2,C1C2C=CC1C=C2
+35,"2,6,10-Trimethyl Undecane-2,6-Diene",10.3,CC(C)CCC=C(C)CCC=C(C)C
+36,3-Carene,2.5,CC1=CCC2C(C1)C2(C)C
+37,3-Methyl-1-Cyclohexene,-0.5,CC1CCCC=C1
+38,4-methyl-1-cyclohexene,0.4,CC1CCC=CC1
+39,Alpha-Damascone,-1.3,C/C=C/C(=O)C1C(=CCCC1(C)C)C
+40,Alpha-Pinene,3.5,CC1=CCC2CC1C2(C)C
+41,Alpha-Terpinene,1.15,CC(C)C1=CC=C(C)CC1
+42,Ambrettolid,1.0,O=C1CCCCC\C=C/CCCCCCCCO1
+43,Benzene,0.0,c1ccccc1
+44,Beta-Ionone,-1.9,CC(=O)/C=C/C1=C(C)CCCC1(C)C
+45,Beta-Pinene,2.15,CC1(C)C2CCC(=C)C1C2
+46,Bicyclohexyl,8.0,C1CCC(CC1)C2CCCCC2
+47,Bis(2-ethylhexyl) Adipate,9.7,CCCCC(CC)COC(=O)CCCCC(=O)OCC(CC)CCCC
+48,Butyl Cyclohexane,7.333333333,CCCCC1CCCCC1
+49,Butyl Dodecanoate,7.2,CCCCCCCCCCCC(=O)OCCCC
+50,ButylBenzene,0.4,CCCCc1ccccc1
+51,Carbon Tetrachloride,0.0,ClC(Cl)(Cl)Cl
+52,Caryophyllene,5.7,C\C1=C/CCC(=C)C2CC(C)(C)C2CC1
+53,Cedryl Methyl Ether,3.5,CO[C@]1(C)CCC23C[C@@H]1C(C)(C)[C@@H]2CC[C@H]3C
+55,Chloro Decane,3.5,CCCCCCCCCCCl
+56,Chloro Dodecane,5.7,CCCCCCCCCCCCCl
+57,Chloro Hexadecane,9.4,CCCCCCCCCCCCCCCCCl
+58,Chloro Octane,1.0,CCCCCCCCCl
+59,Chloro Tetradecane,7.65,CCCCCCCCCCCCCCCl
+60,Chloroform,-14.0,ClC(Cl)Cl
+61,cis-CycloOctene,1.5,C1CCC\C=C/CC1
+62,cis-Decalin,5.3,C1CC[C@@H]2CCCC[C@@H]2C1
+63,Citronellyl Acetate,-0.2,CC(CCOC(C)=O)CCC=C(C)C
+64,Cyclodecane,5.6,C1CCCCCCCCC1
+65,Cyclohexane,2.1,C1CCCCC1
+66,Cyclohexane Decane,14.5,CCCCCCCCCCC1CCCCC1
+67,Cyclohexane Ethane,3.8,CCC1CCCCC1
+68,Cyclohexane Hexane,17.5,CCCCCCC1CCCCC1
+69,Cyclohexane Octane,7.0,CCCCCCCCC1CCCCC1
+70,Cyclohexane Propane,5.6,CCCC1CCCCC1
+71,Cyclohexene,-1.2,C1CCC=CC1
+72,Cyclooctane,4.1,C1CCCCCCC1
+73,Cyclopentane,3.0,C1CCCC1
+74,Cyclopentyl Benzene,3.0,C1CCC(C1)c2ccccc2
+75,Cyclopentyl Cyclohexane,7.0,C1CCC(CC1)C2CCCC2
+76,D-Carvone,-3.1,CC(=C)[C@H]1CC=C(C)C(=O)C1
+77,Decane,10.0,CCCCCCCCCC
+78,DecaneNitrile,-0.6,CCCCCCCCCC#N
+79,Decyl Benzene,6.0,CCCCCCCCCCc1ccccc1
+80,Decyl Butyrate,5.0,CCCCCCCCCCOC(=O)CCC
+81,Decyl Cyclohexane,14.4,CCCCCCCCCCC1CCCCC1
+82,Delta-3-Carene,2.45,CC1=CCC2C(C1)C2(C)C
+83,DibutylEther,2.966666667,CCCCOCCCC
+84,Dichloro Decane,6.3,CCCCCCCCCC(Cl)Cl
+85,Dichloromethane,-13.0,ClCCl
+86,DiheptylEther,8.0,CCCCCCCOCCCCCCC
+87,DihexylEther,6.2,CCCCCCOCCCCCC
+88,DiisopropylEther,2.2,CC(C)OC(C)C
+89,DioctylEther,10.3,CCCCCCCCOCCCCCCCC
+90,DipentylEther,4.2,CCCCCOCCCCC
+91,Dipropoxyethane,0.4,CCCOC(C)OCCC
+92,Dodecane,12.0,CCCCCCCCCCCC
+93,DodecaneNitrile,0.3,CCCCCCCCCCCC#N
+94,Dodecene,8.1,CCCCCCCCCCC=C
+95,Dodecyl Benzene,7.8,CCCCCCCCCCCCc1ccccc1
+96,Dodecyl Cyclohexane,17.3,CCCCCCCCCCCCC1CCCCC1
+97,Dodecyne,2.0,CCCCCCCCCCC#C
+98,Eicosane,20.0,CCCCCCCCCCCCCCCCCCCC
+99,Ethyl Cyclohexane,4.233333333,CCC1CCCCC1
+100,Ethyl Decanoate,2.1,CCCCCCCCCC(=O)OCC
+101,Ethyl Dodecanoate,3.8,CCCCCCCCCCCC(=O)OCC
+102,Ethyl Myristate,5.25,CCCCCCCCCCCCCC(=O)OCC
+103,Ethyl Oleate,7.2,CCCCCCCC\C=C/CCCCCCCC(=O)OCC
+104,Ethyl Palmitate,6.8,CCCCCCCCCCCCCCCC(=O)OCC
+105,Ethylene Brassylate,-1.1,O=C1CCCCCCCCCCCC(=O)OCCO1
+106,Eucalyptol,-1.6,CC12CCC(CC1)C(C)(C)O2
+107,Gamma-Terpinene,1.65,CC(C)C1=CCC(=CC1)C
+108,Geranyl Acetate,-0.6,CC(=O)OC\C=C(/C)CCC=C(C)C
+109,Glycerol Tridecanoate,14.0,CCCCCCCCCC(=O)OCC(OC(=O)CCCCCCCCCC)COC(=O)CCCCCCCCCC
+110,Glycerol Trioctanoate,12.3,CCCCCCCC(=O)OCC(COC(=O)CCCCCCC)OC(=O)CCCCCCC
+111,Heptane,7.0,CCCCCCC
+112,Hexadecane,16.0,CCCCCCCCCCCCCCCC
+113,Hexadecyl Acetate,5.5,CCCCCCCCCCCCCCCCOC(C)=O
+114,Hexamethydisiloxane,12.0,O([Si](C)(C)C)[Si](C)(C)C
+115,Hexane,6.0,CCCCCC
+116,Hexyl Dodecanoate,9.3,CCCCCCCCCCCC(=O)OCCCCCC
+117,Hexyl Methacrylate,1.1,CCCCCCOC(=O)C(C)=C
+118,Hexyl Octanoate,6.2,CCCCCCCC(=O)OCCCCCC
+119,Isohexadecane,12.0,CCCCCCCCCCCCCC(C)C
+120,Isopropyl Benzene,3.0,CC(C)c1ccccc1
+121,Isopropyl Cyclohexane,5.3,CC(C)C1CCCCC1
+122,Isopropyl Myristate,7.25,CCCCCCCCCCCCCC(=O)OC(C)C
+123,Limonene,1.8,CC(=C)C1CCC(=CC1)C
+124,Linalyl Acetate,-0.9,CC(C)=CCCC(C)(OC(C)=O)C=C
+125,Longifolene,6.95,CC1(C)CCCC2(C)C3CCC(C13)C2=C
+126,m-Xylene,2.0,Cc1cccc(C)c1
+127,Menthane,6.0,CC1CCC(CC1)C(C)C
+128,Menthone,-1.5,CC(C)C1CCC(C)CC1=O
+129,Menthyl Acetate,-0.1,CC(C)C1CCC(C)CC1OC(C)=O
+130,Methyl CedrylEther,3.5,CC1CCC2C13CCC(C(C3)C2(C)C)(C)OC
+131,Methyl Cyclohexane,3.15,CC1CCCCC1
+132,Methyl Dihydrojasmonate,-1.7,CCCCCC1C(CCC1=O)CC(=O)OC
+133,Methyl Oleate,9.3,CCCCCCCC\C=C/CCCCCCCC(=O)OC
+134,Methylene Chloride,-14.0,ClCCl
+135,Myrcene,10.43333333,CC(C)=CCCC(=C)C=C
+136,Myristyl Propionate,6.8,CCCCCCCCCCCCCCOC(=O)CC
+137,n-Octane,8.0,CCCCCCCC
+138,Naphthalene,1.0,c1ccc2ccccc2c1
+139,Nonane,9.0,CCCCCCCCC
+140,o-Dichlorobenzene,-5.0,Clc1ccccc1Cl
+141,o-Xylene,2.0,Cc1ccccc1C
+142,Octacosane,28.0,CCCCCCCCCCCCCCCCCCCCCCCCCCCC
+143,Octadecane,18.0,CCCCCCCCCCCCCCCCCC
+144,Octadecene,14.2,CCCCCCCCCCCCCCCCC=C
+145,Octane,8.0,CCCCCCCC
+146,OctaneNitrile,-1.7,CCCCCCCC#N
+147,Octyl Benzene,4.0,CCCCCCCCc1ccccc1
+148,Octyl Octanoate,8.1,CCCCCCCCOC(=O)CCCCCCC
+149,p-Cymene,-0.4,CC(C)c1ccc(C)cc1
+150,p-Menth-2-ene,3.3,CC(C)C1CCC(C)C=C1
+151,p-Menthane,6.0,CC1CCC(CC1)C(C)C
+152,p-Xylene,2.0,Cc1ccc(C)cc1
+153,Pentadecane,15.0,CCCCCCCCCCCCCCC
+154,Pentane,5.0,CCCCC
+155,Pentyl Cyclo Pentane,8.0,CCCCCC1CCCC1
+156,Phenyl Decane,6.0,CCCCCCCCCCc1ccccc1
+157,Phenyl Dodecane,7.9,CCCCCCCCCCCCc1ccccc1
+158,Phenyl Octane,3.8,CCCCCCCCc1ccccc1
+159,Phenyl-1-Butyne,-3.3,CCC#Cc1ccccc1
+160,Pinane,4.1,CC1CCC2CC1C2(C)C
+161,Propyl Cyclohexane,5.866666667,CCCC1CCCCC1
+162,Rose Oxide,-1.7,CC1CCOC(C1)C=C(C)C
+163,Squalane,24.5,CC(C)CCCC(C)CCCC(C)CCCCC(C)CCCC(C)CCCC(C)C
+164,Squalene,13.8,CC(C)=CCC\C(C)=C\CC\C(C)=C\CC\C=C(/C)CC\C=C(/C)CCC=C(C)C
+165,Styrene,3.0,C=Cc1ccccc1
+166,Terpinolene,0.7,CC(C)=C1CCC(=CC1)C
+167,Tetra Cosane,24.0,CCCCCCCCCCCCCCCCCCCCCCCC
+168,Tetra Decane,14.0,CCCCCCCCCCCCCC
+169,Tetra Decyne,3.9,CCCCCCCCCCCCC#C
+170,Tetrachloroethylene,2.9,ClC(Cl)=C(Cl)Cl
+171,Toluene,1.0,Cc1ccccc1
+172,Tricaprilin,12.2,CCCCCCCC(=O)OCC(COC(=O)CCCCCCC)OC(=O)CCCCCCC
+173,Tricaprin,13.3,CCCCCCCCCC(=O)OCC(COC(=O)CCCCCCCCC)OC(=O)CCCCCCCCC
+174,TriChloro Ethylene,2.9,ClC=C(Cl)Cl
+175,TriChloro Methane,-14.0,ClC(Cl)Cl
+176,Tridecane,13.0,CCCCCCCCCCCCC
+177,Trilaurin,15.7,CCCCCCCCCCCC(=O)OCC(COC(=O)CCCCCCCCCCC)OC(=O)CCCCCCCCCCC
+178,Trilinolenin,21.0,CC\C=C/C/C=C\C\C=C/CCCCCCCC(=O)OCC(COC(=O)CCCCCCC\C=C/C/C=C\C\C=C/CC)OC(=O)CCCCCCC\C=C/C/C=C\C\C=C/CC
+179,Trimyristin,18.5,CCCCCCCCCCCCCC(=O)OCC(COC(=O)CCCCCCCCCCCCC)OC(=O)CCCCCCCCCCCCC
+180,Trinonanoin,16.0,CCCCCCCCC(=O)OCC(COC(=O)CCCCCCCC)OC(=O)CCCCCCCC
+181,Triolein,21.2,CCCCCCCC\C=C/CCCCCCCC(=O)OCC(COC(=O)CCCCCCC\C=C/CCCCCCCC)OC(=O)CCCCCCC\C=C/CCCCCCCC
+182,Tripalmitin,21.2,CCCCCCCCCCCCCCCC(=O)OCC(COC(=O)CCCCCCCCCCCCCCC)OC(=O)CCCCCCCCCCCCCCC
+183,Tripalmitolein,19.0,CCCCCC\C=C/CCCCCCCC(=O)OCC(COC(=O)CCCCCCC\C=C/CCCCCC)OC(=O)CCCCCCC\C=C/CCCCCC
+184,Tristearin,23.9,CCCCCCCCCCCCCCCCCC(=O)OCC(COC(=O)CCCCCCCCCCCCCCCCC)OC(=O)CCCCCCCCCCCCCCCCC
+185,Undecane,11.0,CCCCCCCCCCC
