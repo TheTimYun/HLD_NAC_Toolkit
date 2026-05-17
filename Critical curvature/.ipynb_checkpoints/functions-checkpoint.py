@@ -71,5 +71,5 @@ def calculate_rdkit_descriptors(smi, features_to_drop, if_non_ionic = True):
     feats.drop(columns = features_to_drop, inplace=True)
     return feats
 
-def calculate_leverage(row, invxtx):
-    return np.dot(np.dot(row, invxtx), np.transpose(row))[0][0]
+def calculate_leverage(row, invxtx, pipe):
+    return np.dot(np.dot(pipe.transform(row), invxtx), np.transpose(pipe.transform(row)))[0][0]

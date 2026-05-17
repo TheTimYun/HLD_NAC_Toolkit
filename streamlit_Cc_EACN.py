@@ -77,6 +77,7 @@ def Cc_calculation():
             AData = pickle.load(inp)
             warning = AData['warning']
             invxtx = AData['invxtx']
+            pipe = AData['pipe']
         with open('Critical curvature/models_for_prediction_cationic.pickle', 'rb') as inp:
             cationic_model = pickle.load(inp)[0]
         with open('Critical curvature/Features_PaDEL/featured_to_drop_padel.pickle', 'rb') as inp:
@@ -99,7 +100,7 @@ def Cc_calculation():
             feats_cationic.drop(columns = features_to_drop_cationic, inplace=True)
             array_of_cationics.append(feats_cationic)
         average_descriptors = sum(array_of_cationics)/len(array_of_cationics)
-        leverage = calculate_leverage(average_descriptors, invxtx)
+        leverage = calculate_leverage(average_descriptors, invxtx, pipe)
         if leverage > warning:
             st.write(":red[You're outside the applicability domain! Leverage is {:.3g}, whereas warning level is {:.3g}]".format(leverage, warning))
         st.write('Cc acc. to Ridge-based model is **{:.4g}** '.format(calculate_cc(cationic_model, feats_cationic),  ))
@@ -109,6 +110,7 @@ def Cc_calculation():
             AData = pickle.load(inp)
             warning = AData['warning']
             invxtx = AData['invxtx']
+            pipe = AData['pipe']
         with open('Critical curvature/models_for_prediction_anionic.pickle', 'rb') as inp:
             models = pickle.load(inp)
             anionic_model_svr = models[0]
@@ -124,7 +126,7 @@ def Cc_calculation():
             imputer_anionic = imputers['PaDEL_anionic']
             
         feats = calculate_padel_descriptors(smi = smi, imputer = imputer_anionic, features_to_drop = features_to_drop_anionic, extended = False)
-        leverage = calculate_leverage(feats, invxtx)
+        leverage = calculate_leverage(feats, invxtx, pipe)
         if leverage > warning:
             st.write(":red[You're outside the applicability domain! Leverage is {:.3g}, whereas warning level is {:.3g}]".format(leverage, warning))
         st.write('Cc for  SVR-based model is {:.3g}, Cc for  Ridge-based model is {:.3g} '.format(calculate_cc(anionic_model_svr, feats), calculate_cc(anionic_model_ridge, feats) ))
@@ -134,6 +136,7 @@ def Cc_calculation():
             AData = pickle.load(inp)
             warning = AData['warning']
             invxtx = AData['invxtx']
+            pipe = AData['pipe']
         with open('Critical curvature/models_for_prediction_non_ionic.pickle', 'rb') as inp:
             models = pickle.load(inp)
             non_ionic_model_svr = models[0]
@@ -149,7 +152,7 @@ def Cc_calculation():
             array_linear.append(calculate_cc(non_ionic_model_ridge, feats))
             array_of_nonionics.append(feats)
         average_descriptors = sum(array_of_nonionics)/len(array_of_nonionics)
-        leverage = calculate_leverage(average_descriptors, invxtx)
+        leverage = calculate_leverage(average_descriptors, invxtx, pipe)
         if leverage > warning:
             st.write(":red[You're outside the applicability domain! Leverage is {:.3g}, whereas warning level is {:.3g}]".format(leverage, warning))
         st.write('Cc for SVR-based model is {:.3g}, for Ridge-based model is {:.3g} '.format(sum(array_svr)/10, sum(array_linear)/10))
@@ -160,6 +163,7 @@ def Cc_calculation():
             AData = pickle.load(inp)
             warning = AData['warning']
             invxtx = AData['invxtx']
+            pipe = AData['pipe']
         with open('Critical curvature/models_for_prediction_extended.pickle', 'rb') as inp:
             extended_model = pickle.load(inp)[0]
         with open('Critical curvature/Features_PaDEL/featured_to_drop_padel.pickle', 'rb') as inp:
@@ -170,7 +174,7 @@ def Cc_calculation():
             imputer_extended = imputers['PaDEL_extended']
         
         feats = calculate_padel_descriptors(smi = smi, imputer = imputer_extended, features_to_drop = features_to_drop_extended, extended = True)
-        leverage = calculate_leverage(feats, invxtx)
+        leverage = calculate_leverage(feats, invxtx, pipe)
         if leverage > warning:
             st.write(":red[You're outside the applicability domain! Leverage is {:.3g}, whereas warning level is {:.3g}]".format(leverage, warning))
         st.write('Cc for SVR-based model {:.3g}'.format(calculate_cc(extended_model, feats)))

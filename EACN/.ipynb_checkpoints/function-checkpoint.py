@@ -9,6 +9,9 @@ import pickle
 #from torch_molecule import SGIRMolecularPredictor
 from rdkit import Chem
 from rdkit.Chem import AllChem
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+from sklearn.pipeline import make_pipeline
 
 
 
@@ -44,8 +47,10 @@ def calculate_EACN(smi,app_domain, imputer = None, features_to_drop = None, svr_
     descs = descs.drop(columns = features_to_drop)
     invxtx = app_domain['invxtx']
     warning = app_domain['warning']
+    pipe_appdomain = app_domain['pipe']
+    descs_transformed = pipe_appdomain.transform(descs)
 
-    leverage = np.dot(np.dot(descs, invxtx), np.transpose(descs))[0][0]
+    leverage = np.dot(np.dot(descs_transformed, invxtx), np.transpose(descs_transformed))[0][0]
     if leverage>warning:
         flag_AD = True
     else:
