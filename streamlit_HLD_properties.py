@@ -25,7 +25,7 @@ def HLD_tubes():
     if surfactant_selection == 'Ionic':
         col1, col2 = st.columns(2)
         with col1: 
-            conc = st.number_input('Enter concnetration of surfactant in mol/L', value = 0.1)
+            conc = st.number_input('Enter concentration of surfactant in mol/L', value = 0.1)
         with col2:
             MW_counterion = st.number_input('Enter MW of counterion in g/mol', value = 23)
         Cor = 0.3 * MW_counterion * (conc/10)
@@ -146,7 +146,7 @@ def Calculation_of_xi():
             st.write('Density is{} '.format(density))
         
         #Final calculation of xi using special function
-        surfactant_type = st.selectbox('Type of surfactants', options = (None, 'Ionic', 'Nonionic'))
+        surfactant_type = st.selectbox('Type of surfactants', options = (None, 'Ionic', 'Nonionic', 'Zwitterionic'))
         if surfactant_type:
             xi =  xi_calculation(L, interfacial_area, density, MWt, surfactant_type)
             st.write('**ξ is {}**'.format(xi))
@@ -162,14 +162,14 @@ def Phase_diagram():
     #Three blocks - surfactant properties, HLD properties, system properties
     st.write('**Input of surfactant intrinsic properties**')
     #Select the input type - with SMILES (automatic MWt and tail length calculation) or manual input
-    type_of_input = st.selectbox('How do you want to input properties of your surfactants (tail length, molecular weight?', options = (None, 'SMILES', 'Manual'))
+    type_of_input = st.selectbox('How do you want to input properties of your surfactants (tail length, molecular weight?', options = ('Manual','SMILES'))
     if type_of_input == 'Manual':
         col1, col2 = st.columns(2)
         with col1:
-            L = st.number_input('Enter tail length in Å', value = 0.00)
+            L = st.number_input('Enter tail length in Å', value = 20)
             st.write('Tail length is {}Å'.format(L))
         with col2:
-            MWt = st.number_input('Enter molecular weight', value = 0.00)
+            MWt = st.number_input('Enter molecular weight', value = 100)
             st.write('Molecular weight is {} '.format(MWt))
     #Input surfactant molecular structure (SMILES) with subsequent calculation of tail length and MWt 
     elif type_of_input == 'SMILES':
@@ -187,11 +187,34 @@ def Phase_diagram():
                 st.write('Molecular weight is {} '.format(MWt))
             img = Draw.MolToImage(mol)
             st.image(img, smi)
-
-    #Second block - input of HLD properties
+    #Second block - input of system parameters
+    st.write('**Input of system parameters**')
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        #Select volume fraction of water with subsequent calculation of Vo
+        Vw = st.slider("Enter the volume fraction of water ", 0.01, 0.99, 0.5, step = 0.01)
+        Vo = 1 - Vw
+    with col2:
+        #Enter weight concentration and recalculate to mol/ml
+        wt_concentrations_range = st.slider("Select a concentration in % wt",0.1 , 20.1, (1.1, 10.1), step = 0.1)
+        wt_concentrations = np.linspace(wt_concentrations_range[0], wt_concentrations_range[1], 100)
+        if MWt != 0:
+            C_mol_range = ((1000 * wt_concentrations / 100)/MWt)/1000
+    with col3:
+        #Enter interfacial area of surfactant on O/W boundary
+        interfacial_area = st.number_input('Enter interfacial area of surfactant on O/W boundary in Å2', value = 45)
+        st.write('Interfacial area is {} '.format(interfacial_area))
+    
+    #Third block - input of HLD properties
     st.write('**Input of HLD properties**')
     #Selection of surfactant type, which defines HLD calculation
-    surfactant_selection = st.selectbox('Type of surfactants', options = ('Ionic', 'Nonionic'))
+    surfactant_selection = st.selectbox('Type of surfactants', options = ('Nonionic', 'Ionic', 'Zwitterionic'))
+    #Correction for unbound counterion for ionic surfactants - 30% of counterions are unbound
+    if (surfactant_selection == 'Ionic')&(MWt!=0):
+        MW_counterion = st.number_input(('Enter MW of the counterion'))
+        Cor = 100*(C_mol_range[0]+C_mol_range[99])*MW_counterion*0.3
+    else:
+        Cor = 0
     #HLD property that is varied in some range (for fishtail plot of nonionics usually - temperature)
     prop = st.selectbox('Property to be varied', options = (None, 'Cc', 'EACN', 'Temperature', 'Salinity'), placeholder = None)
     if prop:
@@ -209,7 +232,7 @@ def Phase_diagram():
             values = st.slider("Select a range of EACN", -15.00, 15.00, (0.00, 10.00))
             EACN_range = np.linspace(values[0], values[1], 100)
             #calculates HLD range
-            HLDs = HLD_calculation(EACN = EACN_range, Cc = Cc, Sal = Sal, Temp = Temp, Type = surfactant_selection)
+            HLDs = HLD_calculation(EACN = EACN_range, Cc = Cc, Sal = Sal, Temp = Temp, Type = surfactant_selection, Cor = Cor)
         #do the same stages if other properties are selected
         elif prop == 'Cc':
             col1, col2, col3 = st.columns(3)
@@ -222,7 +245,7 @@ def Phase_diagram():
                 Sal = st.number_input('Enter salinity, g NaCl/100 mL', value = 1.00)
             values = st.slider("Select a range of Cc", -15.00, 15.00, (-5.00, 5.00))
             Cc_range = np.linspace(values[0], values[1], 100)
-            HLDs = HLD_calculation(EACN = EACN, Cc = Cc_range, Sal = Sal, Temp = Temp, Type = surfactant_selection)
+            HLDs = HLD_calculation(EACN = EACN, Cc = Cc_range, Sal = Sal, Temp = Temp, Type = surfactant_selection, Cor = Cor)
         elif prop == 'Temperature':
             col1, col2, col3 = st.columns(3)
             with col1:
@@ -234,7 +257,7 @@ def Phase_diagram():
                 Sal = st.number_input('Enter salinity, g NaCl/100 mL', value = 1.00)
             values = st.slider("Select a temperature range", 5.0, 95.0, (25.0, 50.0))
             temp_range = np.linspace(values[0], values[1], 100)
-            HLDs = HLD_calculation(EACN = EACN, Cc = Cc, Sal = Sal, Temp = temp_range, Type = surfactant_selection)
+            HLDs = HLD_calculation(EACN = EACN, Cc = Cc, Sal = Sal, Temp = temp_range, Type = surfactant_selection, Cor = Cor)
         elif prop == 'Salinity':
             col1, col2, col3 = st.columns(3)
             with col1:
@@ -246,24 +269,7 @@ def Phase_diagram():
                 Temp = st.number_input('Enter temperature', value = 25.00)
             values = st.slider("Select a salinity range, g NaCl/100 mL", 0.00, 100.00, (0.00, 5.00))
             Sal_range = np.linspace(values[0], values[1], 100)
-            HLDs = HLD_calculation(EACN = EACN, Cc = Cc, Sal = Sal_range, Temp = Temp, Type = surfactant_selection)
-        #Third block - input of system parameters
-        st.write('**Input of system parameters**')
-        col1, col2, col3 = st.columns(3)
-        with col1:
-            #Select volume fraction of water with subsequent calculation of Vo
-            Vw = st.slider("Enter the volume fraction of water ", 0.01, 0.99, 0.5, step = 0.01)
-            Vo = 1 - Vw
-        with col2:
-            #Enter weight concentration and recalculate to mol/ml
-            wt_concentrations_range = st.slider("Select a concentration in % wt",0.1 , 20.1, (1.1, 10.1), step = 0.1)
-            wt_concentrations = np.linspace(wt_concentrations_range[0], wt_concentrations_range[1], 100)
-            if MWt != 0:
-                C_mol_range = ((1000 * wt_concentrations / 100)/MWt)/1000
-        with col3:
-                #Enter interfacial area of surfactant on O/W boundary
-            interfacial_area = st.number_input('Enter interfacial area of surfactant on O/W boundary in Å2', value = 45)
-            st.write('Interfacial area is {} '.format(interfacial_area))
+            HLDs = HLD_calculation(EACN = EACN, Cc = Cc, Sal = Sal_range, Temp = Temp, Type = surfactant_selection, Cor = Cor)
         #xi calculation - manual input (from app) or automatic calculation
         calculation_type = st.selectbox('How do you want to calculate xi', options = (None, 'Automatically', 'Manually'), placeholder = None)
         if calculation_type == 'Automatically':
@@ -344,14 +350,14 @@ def Volumes_of_phases():
     st.write('Calculation of oil, water and ME boundaries in tubes')
     st.write('**Input of surfactant intrinsic properties**')
     #Select the input type - with SMILES (automatic MWt and tail length calculation) or manual input
-    type_of_input = st.selectbox('How do you want to input properties of your surfactants (tail length, molecular weight?', options = (None, 'SMILES', 'Manual'))
+    type_of_input = st.selectbox('How do you want to input properties of your surfactants (tail length, molecular weight?', options = ('Manual', 'SMILES'))
     if type_of_input == 'Manual':
         col1, col2 = st.columns(2)
         with col1:
-            L = st.number_input('Enter tail length in Å', value = 0)
+            L = st.number_input('Enter tail length in Å', value = 20)
             st.write('Tail length is {}Å'.format(L))
         with col2:
-            MWt = st.number_input('Enter molecular weight', value = 0)
+            MWt = st.number_input('Enter molecular weight', value = 100)
             st.write('Molecular weight is {} '.format(MWt))
     #Input surfactant molecular structure (SMILES) with subsequent calculation of tail length and MWt
     elif type_of_input == 'SMILES':
@@ -369,11 +375,35 @@ def Volumes_of_phases():
                 st.write('Molecular weight is {} '.format(MWt))
             img = Draw.MolToImage(mol)
             st.image(img, smi)
-    #Second block - input of HLD properties
+    
+    #Second block - input of system parameters
+    st.write('**Input of system paramters**')
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        #Enter volume of water and oil in the system
+        Vw = st.slider("Enter the water fraction in the system", 0.01, 0.99, 0.5, step = 0.01)
+        Vo = 1 - Vw
+    with col2:
+        #Enter weight concentration and recalculate to mol/ml
+        wt_concentration = st.slider("Select a concentration of surfactant in water in % wt",0.1 , 20.1, step = 0.1)
+        if MWt != 0:
+            mol_concentration = ((1000 * wt_concentration / 100)/MWt)/1000
+            Vs = (wt_concentration/100)*Vw
+    with col3:
+        interfacial_area = st.number_input('Enter interfacial area in Å2', value = 45)
+        st.write('Interfacial area is {} '.format(interfacial_area)) 
+        #Calculation of As - interfacial area of surfactant molecules in water phase, Rw_red, Ro_ref 
+    #Third block - input of HLD properties
     #HLD property that is varied in some range 
     st.write('**Input of HLD properties**')
     #Selection of surfactant type, which defines HLD calculation
-    surfactant_selection = st.selectbox('Type of surfactants', options = ('Ionic', 'Nonionic'))
+    surfactant_selection = st.selectbox('Type of surfactants', options = ('Ionic', 'Nonionic', 'Zwitterionic'))
+    #Correction for unbound counterion for ionic surfactants - 30% of counterions are unbound
+    if (surfactant_selection == 'Ionic')&(MWt!=0):
+        MW_counterion = st.number_input(('Enter MW of the counterion'))
+        Cor = 100 * mol_concentration *MW_counterion * 0.3
+    else:
+        Cor = 0
     prop = st.selectbox('Property to be varied', options = (None, 'Cc', 'EACN', 'Temperature', 'Salinity'), placeholder = None)
     if prop:
         st.write(prop)
@@ -390,7 +420,7 @@ def Volumes_of_phases():
             values = st.slider("Select a range of EACN", -15.00, 15.00, (0.00, 10.00))
             EACN_range = np.linspace(values[0], values[1], 20)
             #calculates HLD range
-            HLDs = HLD_calculation(EACN = EACN_range, Cc = Cc, Sal = Sal, Temp = Temp, Type = surfactant_selection)
+            HLDs = HLD_calculation(EACN = EACN_range, Cc = Cc, Sal = Sal, Temp = Temp, Type = surfactant_selection, Cor = Cor)
         #do the same stages if other properties are selected
         elif prop == 'Cc':
             col1, col2, col3 = st.columns(3)
@@ -403,7 +433,7 @@ def Volumes_of_phases():
                 Sal = st.number_input('Enter salinity, g NaCl/100 mL', value = 1.00)
             values = st.slider("Select a range of Cc", -15.00, 15.00, (-5.00, 5.00))
             Cc_range = np.linspace(values[0], values[1], 20)
-            HLDs = HLD_calculation(EACN = EACN, Cc = Cc_range, Sal = Sal, Temp = Temp, Type = surfactant_selection)
+            HLDs = HLD_calculation(EACN = EACN, Cc = Cc_range, Sal = Sal, Temp = Temp, Type = surfactant_selection, Cor = Cor)
         elif prop == 'Temperature':
             col1, col2, col3 = st.columns(3)
             with col1:
@@ -415,7 +445,7 @@ def Volumes_of_phases():
                 Sal = st.number_input('Enter salinity, g NaCl/100 mL', value = 1.00)
             values = st.slider("Select a temperature range", 5.00, 95.00, (25.00, 50.00))
             temp_range = np.linspace(values[0], values[1], 20)
-            HLDs = HLD_calculation(EACN = EACN, Cc = Cc, Sal = Sal, Temp = temp_range, Type = surfactant_selection)
+            HLDs = HLD_calculation(EACN = EACN, Cc = Cc, Sal = Sal, Temp = temp_range, Type = surfactant_selection, Cor = Cor)
         elif prop == 'Salinity':
             col1, col2, col3 = st.columns(3)
             with col1:
@@ -427,27 +457,8 @@ def Volumes_of_phases():
                 Temp = st.number_input('Enter temperature', value = 25.00)
             values = st.slider("Select a salinity range, g NaCl/100 mL", 0.00, 100.00, (0.00, 5.00))
             Sal_range = np.linspace(values[0], values[1], 20)
-            HLDs = HLD_calculation(EACN = EACN, Cc = Cc, Sal = Sal_range, Temp = Temp, Type = surfactant_selection)
-        #Third block - input of system parameters
-        st.write('**Input of system paramters**')
-        col1, col2, col3 = st.columns(3)
-        with col1:
-            #Enter volume of water and oil in the system
-            Vw = st.slider("Enter the water fraction in the system", 0.01, 0.99, 0.5, step = 0.01)
-            Vo = 1 - Vw
-        with col2:
-             #Enter weight concentration and recalculate to mol/ml
-            wt_concentration = st.slider("Select a concentration of surfactant in water in % wt",0.1 , 20.1, step = 0.1)
-            if MWt != 0:
-                mol_concentration = ((1000 * wt_concentration / 100)/MWt)/1000
-            Vs = (wt_concentration/100)*Vw
-        with col3:
-            interfacial_area = st.number_input('Enter interfacial area in Å2', value = 45)
-            st.write('Interfacial area is {} '.format(interfacial_area)) 
-        #Calculation of As - interfacial area of surfactant molecules in water phase, Rw_red, Ro_ref 
-        As =  Vw*mol_concentration*6E23*interfacial_area/1E24  
-        Rw_ref = 3*Vw/As
-        Ro_ref = 3*Vo/As
+            HLDs = HLD_calculation(EACN = EACN, Cc = Cc, Sal = Sal_range, Temp = Temp, Type = surfactant_selection, Cor = Cor)
+       
         
         #xi calculation
         calculation_type = st.selectbox('How do you want to calculate xi', options = (None, 'Automatically', 'Manually'), placeholder = None)
@@ -470,6 +481,10 @@ def Volumes_of_phases():
         
         #if xi value is calculated (i.e. calculation type is chosen) and other properties are defined, then calculations of volume take place
         if calculation_type:
+            #Calculation of As, Rw, Ro
+            As =  Vw*mol_concentration*6E23*interfacial_area/1E24  
+            Rw_ref = 3*Vw/As
+            Ro_ref = 3*Vo/As
             #calculation of NACs and emulsion types
             Hs = -(HLDs/L)
             #Creating zero arrays for radiia of water and oil droplets
@@ -601,7 +616,7 @@ def Salts_additives_calculator():
     st.title('Calculation of equivalent water salinity')
     st.write('Calculates equivalent salinity in terms of g Nacl / 100 mL of the aqueous phase')
     #Selection of surfactant type
-    surfactant_type = st.selectbox('Type of your surfactant', options = [None, 'Cationic', 'Anionic', 'Nonionic'])
+    surfactant_type = st.selectbox('Type of your surfactant', options = [None, 'Cationic', 'Anionic', 'Nonionic', 'Zwitterionic'])
     #For ionic surfactant
     if (surfactant_type == 'Cationic')|(surfactant_type=='Anionic'):
         sum_eq = 0
@@ -640,7 +655,7 @@ def Salts_additives_calculator():
             sum_eq += render_row(i)
         st.write('Summed equivalent salinity is **{:.2f}** g NaCl/ 100 mL'.format(sum_eq))
     #For nonionic surfactant
-    elif surfactant_type == 'Nonionic':
+    elif (surfactant_type == 'Nonionic')|(surfactant_type=='Zwitterionic'):
         sum_eq = 0
         import pickle
         #Loading data
@@ -680,14 +695,14 @@ def IFT_and_viscosity_calculation():
     #Three blocks - surfactant properties, HLD properties, system properties
     st.write('**Input of surfactant intrinsic properties**')
     #Select the input type - with SMILES (automatic MWt and tail length calculation) or manual input
-    type_of_input = st.selectbox('How do you want to input properties of your surfactants (tail length, molecular weight?', options = (None, 'SMILES', 'Manual'))
+    type_of_input = st.selectbox('How do you want to input properties of your surfactants (tail length, molecular weight?', options = ('Manual', 'SMILES'))
     if type_of_input == 'Manual':
         col1, col2 = st.columns(2)
         with col1:
-            L = st.number_input('Enter tail length in Å', value = 0)
+            L = st.number_input('Enter tail length in Å', value = 20)
             st.write('Tail length is {}Å'.format(L))
         with col2:
-            MWt = st.number_input('Enter molecular weight', value = 0)
+            MWt = st.number_input('Enter molecular weight', value = 100)
             st.write('Molecular weight is {} '.format(MWt))
     #Input surfactant molecular structure (SMILES) with subsequent calculation of tail length and MWt
     elif type_of_input == 'SMILES':
@@ -705,17 +720,42 @@ def IFT_and_viscosity_calculation():
                 st.write('Molecular weight is {} '.format(MWt))
             img = Draw.MolToImage(mol)
             st.image(img, smi)
-    #Second block - input of HLD properties
+        #Second block - input of system parameters
+    st.write('**Input of system paramters**')
+    col1, col2, col3, col4 = st.columns(4)
+    with col1:
+        Vw = st.slider("Enter the volume % of water", 0.01, 0.99, 0.5, step = 0.01)
+        Vo = 1 - Vw
+    with col2:
+        #Enter weight concentration and recalculate to mol/ml
+        wt_concentration = st.slider("Select a concentration of surfactant in water in % wt",0.1 , 20.1, step = 0.1)
+        if MWt != 0:
+            mol_concentration = ((1000 * wt_concentration / 100)/MWt)/1000
+        Vs = (wt_concentration/100)*Vw
+    with col3:
+        interfacial_area = st.number_input('Enter interfacial area in Å2', value = 45)
+        st.write('Interfacial area is {} '.format(interfacial_area)) 
+    with col4:
+        mu_water = st.number_input('Enter water viscosity (cP)', value = 1)
+        mu_oil = st.number_input('Enter oil viscosity (cP)', value = 1)
+        
+    #Third block - input of HLD properties
     st.write('**Input of HLD properties**')
     #Selection of surfactant type, which defines HLD calculation
-    surfactant_selection = st.selectbox('Type of surfactants', options = ('Ionic', 'Nonionic'))
+    surfactant_selection = st.selectbox('Type of surfactants', options = ('Ionic', 'Nonionic', 'Zwitterionic'))
+    #Correction for unbound counterion for ionic surfactants - 30% of counterions are unbound
+    if (surfactant_selection == 'Ionic')&(MWt!=0):
+        MW_counterion = st.number_input(('Enter MW of the counterion'))
+        Cor = 100 * mol_concentration *MW_counterion * 0.3
+    else:
+        Cor = 0
     #Surfactant type and "is extended" defines the coefficient before kbT for IFT calculation 
     is_extended = st.checkbox('Is surfactant extended')
     if is_extended:
         coeff = 7
     elif (surfactant_selection == 'Ionic') & (not is_extended) :
         coeff = 1
-    elif (surfactant_selection == 'Nonionic') & (not is_extended):
+    elif ((surfactant_selection == 'Nonionic')|(surfactant_selection=='Zwitterionic')) & (not is_extended):
         coeff = 4
     #HLD property that is varied in some range and hthe app draws tubes against its value
     prop = st.selectbox('Property to be varied', options = (None, 'Cc', 'EACN', 'Temperature', 'Salinity'), placeholder = None)
@@ -733,7 +773,7 @@ def IFT_and_viscosity_calculation():
             values = st.slider("Select a range of EACN", -15.00, 15.00, (0.00, 10.00))
             EACN_range = np.linspace(values[0], values[1], 20)
             #calculates HLD range
-            HLDs = HLD_calculation(EACN = EACN_range, Cc = Cc, Sal = Sal, Temp = Temp, Type = surfactant_selection)
+            HLDs = HLD_calculation(EACN = EACN_range, Cc = Cc, Sal = Sal, Temp = Temp, Type = surfactant_selection, Cor = Cor)
         #do the same stages if other properties are selected
         elif prop == 'Cc':
             col1, col2, col3 = st.columns(3)
@@ -746,7 +786,7 @@ def IFT_and_viscosity_calculation():
                 Sal = st.number_input('Enter salinity, g NaCl/100 mL', value = 1.00)
             values = st.slider("Select a range of Cc", -15.00, 15.00, (-5.00, 5.00))
             Cc_range = np.linspace(values[0], values[1], 20)
-            HLDs = HLD_calculation(EACN = EACN, Cc = Cc_range, Sal = Sal, Temp = Temp, Type = surfactant_selection)
+            HLDs = HLD_calculation(EACN = EACN, Cc = Cc_range, Sal = Sal, Temp = Temp, Type = surfactant_selection, Cor = Cor)
         elif prop == 'Temperature':
             col1, col2, col3 = st.columns(3)
             with col1:
@@ -758,7 +798,7 @@ def IFT_and_viscosity_calculation():
                 Sal = st.number_input('Enter salinity, g NaCl/100 mL', value = 1.00)
             values = st.slider("Select a temperature range", 5.00, 95.00, (25.00, 50.00))
             temp_range = np.linspace(values[0], values[1], 20)
-            HLDs = HLD_calculation(EACN = EACN, Cc = Cc, Sal = Sal, Temp = temp_range, Type = surfactant_selection)
+            HLDs = HLD_calculation(EACN = EACN, Cc = Cc, Sal = Sal, Temp = temp_range, Type = surfactant_selection, Cor = Cor)
         elif prop == 'Salinity':
             col1, col2, col3 = st.columns(3)
             with col1:
@@ -770,29 +810,8 @@ def IFT_and_viscosity_calculation():
                 Temp = st.number_input('Enter temperature', value = 25.00)
             values = st.slider("Select a salinity range, g NaCl/100 mL", 0.00, 100.00, (0.00, 5.00))
             Sal_range = np.linspace(values[0], values[1], 20)
-            HLDs = HLD_calculation(EACN = EACN, Cc = Cc, Sal = Sal_range, Temp = Temp, Type = surfactant_selection)
-        #Third block - input of system parameters
-        st.write('**Input of system paramters**')
-        col1, col2, col3, col4 = st.columns(4)
-        with col1:
-            Vw = st.slider("Enter the volume % of water", 0.01, 0.99, 0.5, step = 0.01)
-            Vo = 1 - Vw
-        with col2:
-             #Enter weight concentration and recalculate to mol/ml
-            wt_concentration = st.slider("Select a concentration of surfactant in water in % wt",0.1 , 20.1, step = 0.1)
-            if MWt != 0:
-                mol_concentration = ((1000 * wt_concentration / 100)/MWt)/1000
-            Vs = (wt_concentration/100)*Vw
-        with col3:
-            interfacial_area = st.number_input('Enter interfacial area in Å2', value = 45)
-            st.write('Interfacial area is {} '.format(interfacial_area)) 
-        with col4:
-            mu_water = st.number_input('Enter water viscosity (cP)', value = 1)
-            mu_oil = st.number_input('Enter oil viscosity (cP)', value = 1)
-        As =  Vw*mol_concentration*6E23*interfacial_area/1E24  
-        Rw_ref = 3*Vw/As
-        Ro_ref = 3*Vo/As
-        
+            HLDs = HLD_calculation(EACN = EACN, Cc = Cc, Sal = Sal_range, Temp = Temp, Type = surfactant_selection, Cor = Cor)
+
         
         #xi calculation - manual input (from app) or automatic calculation
         calculation_type = st.selectbox('How do you want to calculate xi', options = (None, 'Automatically', 'Manually'), placeholder = None)
@@ -813,6 +832,10 @@ def IFT_and_viscosity_calculation():
 
         #if xi value is sucessfully calculated, then other calculations take place        
         if calculation_type:
+            #Calculation of As, Rwref, Roref
+            As =  Vw*mol_concentration*6E23*interfacial_area/1E24  
+            Rw_ref = 3*Vw/As
+            Ro_ref = 3*Vo/As
             #calculation of NACs and emulsion types
             Hs = -(HLDs/L)
             Ros = np.zeros((len(Hs)), dtype = 'float')
@@ -937,7 +960,7 @@ def Ternary_phase_diagram():
     st.write('Calculation and plotting of O-W-S ternary phase diagrams')
     #Select the input type - with SMILES (automatic MWt and tail length calculation) or manual input
     type_of_input = st.selectbox('How do you want to input properties of your surfactants (tail length, molecular weight?', options = (None, 'SMILES', 'Manual'))       
-    #Session state code block is used to prevent immediate plotting with unexisting parameters tight after the app is launched 
+    #Session state code block is used to prevent immediate plotting with unexisting parameters right after the app is launched 
     if "L" not in st.session_state:
         st.session_state.L = None
     if type_of_input == 'Manual':
@@ -970,7 +993,17 @@ def Ternary_phase_diagram():
             st.image(img, smi)
     #Second block - input of HLD properties. Nothing is varied, you just enter properties and calculate HLD.
     #Defines type of the surfactant, which determines HLD equation
-    surfactant_selection = st.selectbox('Type of surfactants', options = ('Ionic', 'Nonionic')) 
+    surfactant_selection = st.selectbox('Type of surfactants', options = ('Ionic', 'Nonionic', 'Zwitterionic')) 
+    #Correction for unbound counterion for ionic surfactants - 30% of counterions are unbound
+    if surfactant_selection == 'Ionic':
+        col1, col2 = st.columns(2)
+        with col1: 
+            conc = st.number_input('Enter concentration of surfactant in mol/L', value = 0.1)
+        with col2:
+            MW_counterion = st.number_input('Enter MW of counterion in g/mol', value = 23)
+        Cor = 0.3 * MW_counterion * (conc/10)
+    else:
+        Cor = 0
     col1, col2, col3, col4 = st.columns(4)
     with col1:
         EACN = st.number_input('Enter EACN', value = 0.00)
@@ -981,7 +1014,7 @@ def Ternary_phase_diagram():
     with col4:
         Cc = st.number_input('Enter Cc value of your surfactant', value = -1.0)
     #HLD value calculation
-    HLD = HLD_calculation(EACN = EACN, Cc = Cc, Sal = Sal, Temp = Temp, Type = surfactant_selection)
+    HLD = HLD_calculation(EACN = EACN, Cc = Cc, Sal = Sal, Temp = Temp, Type = surfactant_selection, Cor = Cor)
     
     #xi calculation - manual input (from app) or automatic calculation
     calculation_type = st.selectbox('How do you want to calculate xi', options = (None, 'Automatically', 'Manually'), placeholder = None)

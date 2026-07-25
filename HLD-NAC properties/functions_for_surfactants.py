@@ -126,7 +126,7 @@ def draw_tubes_volumes(boundary_1, boundary_2, fr_o, fr_w, fr_me,  range, prop, 
     ax.set_ylabel('Volume fraction')
     return fig
 
-def HLD_calculation(EACN, Cc, Sal, Temp, Type, Cor):
+def HLD_calculation(EACN, Cc, Sal, Temp, Type, Cor = 0.01):
     """
     Calculation of HLD for the selected surfactant
     """
@@ -180,7 +180,7 @@ def xi_calculation(L, interfacial_area, density, MWt, surfactant_type):
         OF = 13 * (L/interfacial_area)/((MWt/density)**(1/3))
         xi = 40 * np.exp(1.2*OF)
         return xi
-    elif surfactant_type == 'Nonionic':
+    elif (surfactant_type == 'Nonionic')|(surfactant_type == 'Zwitterionic'):
         OF = 13 * (L/interfacial_area)/((MWt/density)**(1/3))
         xi = 0.4 * np.exp(6.6*OF)
         return xi
