@@ -20,7 +20,18 @@ def HLD_tubes():
     st.title('HLD calculation and drawing tubes')
     st.write('Calculation of HLD for the range of tubes and plotting their phase state schematically')
     #Selection of surfactant type, which defines coefficients for HLD calculation
-    surfactant_selection = st.selectbox('Type of surfactants', options = ('Ionic', 'Nonionic'))
+    surfactant_selection = st.selectbox('Type of surfactants', options = ('Ionic', 'Nonionic', 'Zwitterionic'))
+    #Correction for unbound counterion for ionic surfactants - 30% of counterions are unbound
+    if surfactant_selection == 'Ionic':
+        col1, col2 = st.columns(2)
+        with col1: 
+            conc = st.number_input('Enter concnetration of surfactant in mol/L', value = 0.1)
+        with col2:
+            MW_counterion = st.number_input('Enter MW of counterion in g/mol', value = 23)
+        Cor = 0.3 * MW_counterion * (conc/10)
+    else:
+        Cor = 0
+        
     #HLD property that is varied in some range
     prop = st.selectbox('Property to be varied', options = (None, 'Cc', 'EACN', 'Temperature', 'Salinity'), placeholder = None)
     if prop:
@@ -38,7 +49,7 @@ def HLD_tubes():
             values = st.slider("Select a range of EACN", -15.00, 15.00, (0.00, 10.00))
             EACN_range = np.linspace(values[0], values[1], 10)
             #calculates HLD and draw tubes
-            HLDs = HLD_calculation(EACN = EACN_range, Cc = Cc, Sal = Sal, Temp = Temp, Type = surfactant_selection)
+            HLDs = HLD_calculation(EACN = EACN_range, Cc = Cc, Sal = Sal, Temp = Temp, Type = surfactant_selection, Cor = Cor)
             fig = draw_tubes(HLDs, EACN_range, 'EACN')
             #shows figure in streamlit
             st.pyplot(fig)
@@ -54,7 +65,7 @@ def HLD_tubes():
                 Sal = st.number_input('Enter salinity, g NaCl/100 mL', value = 1.00)
             values = st.slider("Select a range of Cc", -15.00, 15.00, (-5.00, 5.00))
             Cc_range = np.linspace(values[0], values[1], 10)
-            HLDs = HLD_calculation(EACN = EACN, Cc = Cc_range, Sal = Sal, Temp = Temp, Type = surfactant_selection)
+            HLDs = HLD_calculation(EACN = EACN, Cc = Cc_range, Sal = Sal, Temp = Temp, Type = surfactant_selection, Cor = Cor)
             fig = draw_tubes(HLDs, Cc_range, 'Cc')
             st.pyplot(fig)
         elif prop == 'Temperature':
@@ -68,7 +79,7 @@ def HLD_tubes():
                 Sal = st.number_input('Enter salinity, g NaCl/100 mL', value = 1.00)
             values = st.slider("Select a temperature range", 5.0, 95.0, (25.0, 50.0))
             temp_range = np.linspace(values[0], values[1], 10)
-            HLDs = HLD_calculation(EACN = EACN, Cc = Cc, Sal = Sal, Temp = temp_range, Type = surfactant_selection)
+            HLDs = HLD_calculation(EACN = EACN, Cc = Cc, Sal = Sal, Temp = temp_range, Type = surfactant_selection, Cor = Cor)
             fig = draw_tubes(HLDs, temp_range, 'T')
             st.pyplot(fig)
         elif prop == 'Salinity':
@@ -82,7 +93,7 @@ def HLD_tubes():
                 Temp = st.number_input('Enter temperature', value = 25.00)
             values = st.slider("Select a salinity range, g NaCl/100 mL", 0.00, 100.00, (0.00, 5.00))
             Sal_range = np.linspace(values[0], values[1], 10)
-            HLDs = HLD_calculation(EACN = EACN, Cc = Cc, Sal = Sal_range, Temp = Temp, Type = surfactant_selection)
+            HLDs = HLD_calculation(EACN = EACN, Cc = Cc, Sal = Sal_range, Temp = Temp, Type = surfactant_selection, Cor = Cor)
             fig = draw_tubes(HLDs, Sal_range, 'S')
             st.pyplot(fig)
 
