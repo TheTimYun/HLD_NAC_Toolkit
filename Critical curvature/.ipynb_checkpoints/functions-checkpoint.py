@@ -53,7 +53,7 @@ def calculate_padel_descriptors(smi, imputer, features_to_drop, extended = True)
 def calculate_rdkit_descriptors(smi, features_to_drop, if_non_ionic = True):
     mol = Chem.MolFromSmiles(smi)
     optimized_molecule = embed_optimize(smi)
-    calc_2d = RDKitDescriptors2D(ignore_descrs=['AvgIpc', 'Ipc'], do_not_standardize=True)
+    calc_2d = RDKitDescriptors2D(ignore_descrs=['AvgIpc', 'Ipc', 'SPS'], do_not_standardize=True)
     calc_3d = RDKitDescriptors3D()
     with dm.without_rdkit_log():
         trans_2D = MoleculeTransformer(calc_2d, verbose = True)
