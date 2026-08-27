@@ -12,7 +12,37 @@ from functions_for_surfactants import draw_type_1, draw_type_2, draw_type_3, dra
 
 
 
-
+def CC_mixture():
+    st.title('Cc calculation of mixture of surfactants')
+    #Three columns that define type of following input - how we enter ratios (on the molar or weight basis), number of species and how we enter the molecular weight if weight basis is selected
+    concentration_type = st.selectbox('Type of ratio of every surfactant', options = ('Molar', 'Weight'), placeholder = None)
+    number_of_surfactants = st.number_input('Enter number of surfactants in the system', value = 0)
+    enter_prropertes_type = st.selectbox('How do you want to enter molecular weight', options = ('SMILES', 'Manual'), placeholder = None)
+    #starting calculations here
+    if number_of_surfactants > 0:
+        columns = st.columns(number_of_surfactants)
+        CCs = []
+        MolWts = []
+        ratios = []
+        for i, column in enumerate(columns):
+            with column:
+                CC_surf = st.number_input('Enter Cc of surfactant {}'.format(i+1), value = 0.00)
+                CCs.append(CC_surf)
+                ratio = st.number_input('Enter ratio surfactant {}'.format(i+1), value = 0.00)
+                ratios.append(ratio)
+                if concentration_type == 'Weight':
+                    if enter_prropertes_type == 'SMILES':
+                        smi = st.text_input('Enter SMILES of surfactant {}'.format(i))
+                        MolWts.append(MolWt(Chem.MolFromSmiles(smi)))
+                    else:
+                        MWt = st.number_input('Enter MW of surfactant {}'.format(i))
+                        MolWts[i].append(MWt)
+                    mols = 100*np.array(ratios)/MolWts
+                    molar_ratios = mols/np.sum(mols)
+                else:
+                    molar_ratios = ratios
+        st.write('CC of the mixture is {}'.format(np.sum(np.array(CCs)*np.array(molar_ratios))))
+        
 
         
 def HLD_tubes():
@@ -1117,6 +1147,6 @@ def Ternary_phase_diagram():
 
 
 
-pg = st.navigation([Salts_additives_calculator, HLD_tubes, Calculation_of_xi, Phase_diagram, Volumes_of_phases, IFT_and_viscosity_calculation, Ternary_phase_diagram])
+pg = st.navigation([CC_mixture, Salts_additives_calculator, HLD_tubes, Calculation_of_xi, Phase_diagram, Volumes_of_phases, IFT_and_viscosity_calculation, Ternary_phase_diagram])
 
 pg.run()
