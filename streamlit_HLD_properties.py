@@ -6,10 +6,35 @@ from rdkit import Chem
 from rdkit.Chem.Descriptors import MolWt
 from rdkit.Chem import Draw
 st.set_page_config(layout='wide')
+from functions_for_surfactants import len_calculation
+EO = 'O[CH2][CH2]O'
 
 
 from functions_for_surfactants import draw_type_1, draw_type_2, draw_type_3, draw_tubes, HLD_calculation, len_calculation, xi_calculation
 
+def Cloud_point_calculation():
+    st.title('Cloud point calculation for nonionic ethoxylated surfactant')
+    #Two columns - type of nonionic and type of input
+    nonionic_type = st.selectbox('Select the type of noionoic surfactant', options = ['Ethoxylated alcohol', 'Ethoxylated phenol'], placeholder = None)
+    input_type = st.selectbox('Select the type of input', options = ['Manual', 'SMILES'], placeholder = None)
+    #get number of EOs and carbon atoms - automatically or manually
+    if input_type =='Manual':
+        n_EOs = st.number_input('Enter number of EOs units', value = 5) 
+        n_C = st.number_input('Enter number of carbon atoms ', value = 5)
+    if input_type =='SMILES':
+        smi = st.text_input('Enter SMILES of surfactant')
+        mol = Chem.MolFromSmiles(smi)
+        L = len_calculation(mol, include_benzene=False)
+        n_EOs = len(mol.GetSubstructMatches(Chem.MolFromSmarts(EO)))
+        n_C = 1 + ((L/1.3)-1.5)/1.265
+    #calculation of Cc using GC method
+    if nonionic_type  == 'Ethoxylated alcohol':
+        Cc = 0.2 * n_C - n_EOs + 2.7
+    elif nonionic_type  == 'Ethoxylated phenol':
+        HLB =  20 * ( (44.05 * n_EOs)/(44.05*n_EOs + 14 * n_C + 94))
+        Cc  = (11.5 - HLB)/0.85
+    cloud_point = 25 + (-Cc + (0.16 * 7.3))/0.06
+    st.write('Cloud point of the surfactant is (degC) ', cloud_point)
 
 
 def CC_mixture():
@@ -131,10 +156,13 @@ def Calculation_of_xi():
     #calculates xi parameter for HLD-NAC concept
     st.title('Calculation of xi parameter in HLD-NAC equation')
     #Enter surafactant properties
+    surfactant_type = st.selectbox('Type of surfactant', options = (None, 'Ionic', 'Nonionic', 'Zwitterionic'))
     col1, col2 = st.columns(2)
     with col1:
        #Select the input type - with SMILES (automatic MWt and tail length calculation) or manual input
         type_of_input = st.selectbox('How do you want to input tail length of surfactant', options = (None, 'SMILES', 'Manual'))
+        if "L" not in st.session_state:
+            L = None
         if type_of_input == 'Manual':
             L = st.slider('Select length of carbon chain in Å', 0, 100, 20)
             st.write('Tail length is {}Å'.format(L))
@@ -151,12 +179,22 @@ def Calculation_of_xi():
                 st.image(img, smi)
         #Input of interfacial area of surfactant 
         with col2:
-            interfacial_area = st.slider('Select interfacial area in Å2', 0, 200, 45)
+            if surfactant_type == 'Nonionic':
+                type_of_input = st.selectbox('How do you want to input tail length', options = ['By number of EOs', 'Manually'])
+                if type_of_input == 'By number of EOs':
+                    n_EOs = st.number_input('Enter number of EOs', value = 10)
+                    interfacial_area = 24 * (n_EOs**0.46)
+                else:
+                    interfacial_area = st.slider('Select interfacial area in Å2', 0, 200, 45)
+            else:
+                interfacial_area = st.slider('Select interfacial area in Å2', 0, 200, 45)
             st.write('Interfacial area is {} '.format(interfacial_area))
     #Input of oil properties - moleular wight and density
     col1, col2 = st.columns(2)
     with col1:
         #Type of input - with SMILES (automatic MWt calculation) or manual MWT value
+        if "MWt" not in st.session_state:
+            MWt = None
         type_of_input = st.selectbox('How do you want to input molecular weight of oil', options = (None, 'SMILES', 'Manual'))
         if type_of_input == 'Manual':
             MWt = st.slider('Select oil molecular weight', 0, 400, 95)
@@ -176,10 +214,11 @@ def Calculation_of_xi():
             st.write('Density is{} '.format(density))
         
         #Final calculation of xi using special function
-        surfactant_type = st.selectbox('Type of surfactants', options = (None, 'Ionic', 'Nonionic', 'Zwitterionic'))
-        if surfactant_type:
+        #surfactant_type = st.selectbox('Type of surfactant', options = (None, 'Ionic', 'Nonionic', 'Zwitterionic'))
+        if L and MWt:
             xi =  xi_calculation(L, interfacial_area, density, MWt, surfactant_type)
             st.write('**ξ is {}**'.format(xi))
+        
         
        
             
@@ -1147,6 +1186,6 @@ def Ternary_phase_diagram():
 
 
 
-pg = st.navigation([CC_mixture, Salts_additives_calculator, HLD_tubes, Calculation_of_xi, Phase_diagram, Volumes_of_phases, IFT_and_viscosity_calculation, Ternary_phase_diagram])
+pg = st.navigation([Cloud_point_calculation, CC_mixture, Salts_additives_calculator, HLD_tubes, Calculation_of_xi, Phase_diagram, Volumes_of_phases, IFT_and_viscosity_calculation, Ternary_phase_diagram])
 
 pg.run()
