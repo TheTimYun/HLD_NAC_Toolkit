@@ -54,7 +54,7 @@ After launch of Streamlit app, you can choose the property that you want to pred
 
 ## Calculation of system properties (streamlit_HLD_properties.py)
 
-This file contains numerous apps, that failitate the formulation process. Several of them  apps resemble the ones made by [Steven Abbott](https://www.stevenabbott.co.uk/practical-surfactants/) and several of them follow  Excel spreadsheetds, provided by [E. J. Acosta](https://www.researchgate.net/profile/Edgar-Acosta-4/research) All these apps they can be launched offline and use simple cheinformatics methods to skip annoying stages of manual molecular weight and tail length calculation. Required packages are
+This file contains numerous apps, that failitate the formulation process. Several of them  apps resemble the ones made by [Steven Abbott](https://www.stevenabbott.co.uk/practical-surfactants/) and several of them follow  Excel spreadsheetds, provided by [E. J. Acosta](https://www.researchgate.net/profile/Edgar-Acosta-4/research) All these apps can be launched offline, they use simple cheinformatics methods to skip annoying stages of manual molecular weight and tail length calculation. Required packages are
 
 
 ```
@@ -67,7 +67,7 @@ Following apps are contained here:
 2. **CC mixture calulator** - to calculate Cc of surfactants mixture, indicidual Cc value, ratios in mixture and molecular weights/SMILES are required
 3. **Salts additives calculator**. It re-calculates water solution with several different salts into units of g NaCl/100 mL. You have to select type of your surfactants and then choose salt (as cation and anion) and its concentration. Equivalent salinity will be shown on the left side, summed equivalent salinity will be shown below;
 4. **HLD tubes** - an equivalent of [this app](https://www.stevenabbott.co.uk/practical-surfactants/HLD-Tubes.php). You choose  HLD parameter (Cc, EACN, salinity or temperature), that you want to vary, select its min and max values and enter other parameters as well as type of surfactant. You will get a simple picture, that shows phase behvaiour of your system, depdnding on the varied value;
-5. **Emulsion prearation** - an app that helps  to choose optimal HLD parameters to prepare emulsion. HLD of the system is calculated and then plotted vs water content as in the [image](https://www.stevenabbott.co.uk/practical-surfactants/inversion.php) by Steven Abbott. Plot reflects all zones (water-in-oil, oil-in-water, multiple emulsions, transition triangles) and optimal ranges for fast inversion, if you want to employ catastrophic inversion (HLD between 2 and 3 both on poisitve and negative sides); 
+5. **Emulsion preparation** - an app that helps  to choose optimal HLD parameters to prepare emulsion. HLD of the system is calculated and then plotted vs water content as in the [image](https://www.stevenabbott.co.uk/practical-surfactants/inversion.php) by Steven Abbott. Plot reflects all zones (water-in-oil, oil-in-water, multiple emulsions, transition triangles) and optimal ranges for fast inversion, if you want to employ catastrophic inversion (HLD between 2 and 3 both on poisitve and negative sides); 
 6. **$\xi$** calculation - equivalent of [this app](https://www.stevenabbott.co.uk/practical-surfactants/xi.php). Calculates $\xi$ parameter from HLD-NAC equations. Interfacial area of nonionic surfactant **must**  be calculated here.  Caclulation is done according to formula from "Surfactant formulation engineering using HLD and NAC" by E. Acosta, 2025. 
 
 **$A_{\text{interfacial}} = 24 \cdot n_{\text{EOs}}^{0.46}$**
