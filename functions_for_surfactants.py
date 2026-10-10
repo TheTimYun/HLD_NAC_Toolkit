@@ -138,7 +138,7 @@ def HLD_calculation(EACN, Cc, Sal, Temp, Type, Cor = 0.01):
         HLD = Cc - 0.17 * EACN - 0.00 * (Temp - 25) + 0.13 * Sal
     return HLD
 
-def len_calculation(mol):
+def len_calculation(mol, include_benzene = True):
     """
     Calculation of tail length of surfactant. Requires "mol" RDKit object
     """
@@ -146,7 +146,7 @@ def len_calculation(mol):
     #Structural fragments, described as SMARTS
     p1 = '[CX4H3][CX4H2]'
     p2 = '[CX4H3][CX4H1]([#6])[#6]'
-    secondary = '[CX4H2]'
+    secondary = '[CX4H2;!$(C(-O)-C-O)]'
     tertiary_2 = '[CH3][CH1;X4]([CH3])'
     tertiary = '[CH1;X4]'
     benzene = 'c1ccccc1'
@@ -163,7 +163,10 @@ def len_calculation(mol):
     n_benzene = len(mol.GetSubstructMatches(Chem.MolFromSmarts(benzene)))
     n_tertiary_non_2 = n_tertiary-n_tertiary_2-n_PO
     #Calculation of tail length, according to Abbott
-    number_of_carbons = (n_p1 + n_p2 +n_secondary)+6.9*n_tertiary_2 + 0.71 * n_tertiary_non_2 +3.5 * n_benzene
+    if include_benzene:
+        number_of_carbons = (n_p1 + n_p2 +n_secondary)+6.9*n_tertiary_2 + 0.71 * n_tertiary_non_2 +3.5 * n_benzene
+    else:
+        number_of_carbons = (n_p1 + n_p2 +n_secondary)+6.9*n_tertiary_2 + 0.71 * n_tertiary_non_2 
     Lc = 1.5 + 1.265 * number_of_carbons
     L = 1.3 * Lc
     return L
@@ -185,4 +188,50 @@ def xi_calculation(L, interfacial_area, density, MWt, surfactant_type):
         xi = 0.4 * np.exp(6.6*OF)
         return xi
 
+
+def draw_emulsion_plot(HLD_val):
+    fig, ax = plt.subplots(1,1, figsize = (20,5))
+    ax.set_xlim(0,100)
+    ax.set_ylim(-4,4)
+    ax.set_xlabel('Water content, % wt.')
+    ax.set_ylabel('HLD')
+    ax.plot([25,25], [-4,0], c = 'k', linewidth=2)
+    ax.plot([25,75], [0,0], c = 'k', linewidth=2)
+    ax.plot([75,75], [0,4], c = 'k', linewidth=2)
+    
+    ax.plot([0,100], [0,0], linewidth=1, c = 'b', ls = '--')
+    ax.plot([20,25], [-4,0], linewidth=1, c = 'g', ls = '--')
+    ax.plot([25,30], [0,-4], linewidth=1, c = 'g', ls = '--')
+    
+    ax.plot([70,75], [4,0], linewidth=1, c = 'g', ls = '--')
+    ax.plot([75,80], [0,4], linewidth=1, c = 'g', ls = '--')
+    
+    recs = (patches.Rectangle((0,-4), width = 25, height = 4, facecolor = 'yellow', alpha = 0.2),
+           patches.Rectangle((0,0), width = 75, height = 4, facecolor = 'yellow', alpha = 0.2),
+            patches.Rectangle((25,-4), width = 75, height = 4, facecolor = 'blue', alpha = 0.2),
+           patches.Rectangle((75,0), width = 25, height = 4, facecolor = 'blue', alpha = 0.2))
+    
+    for rec in recs:
+        ax.add_patch(rec)
+    
+    tris = (patches.Polygon(np.transpose(np.array(([20, 25, 25], [-4,0,-4]))), facecolor = 'cyan', alpha = 0.5),
+           patches.Polygon(np.transpose(np.array(([25, 25, 30], [-4,0,-4]))), facecolor = 'yellow', alpha = 0.5),
+           patches.Polygon(np.transpose(np.array(([70, 75, 75], [4,0,4]))), facecolor = 'cyan', alpha = 0.5),
+           patches.Polygon(np.transpose(np.array(([75, 75, 80], [4,0,4]))), facecolor = 'yellow', alpha = 0.5))
+    for tri in tris:
+        ax.add_patch(tri)
+    
+    ax.text(10, -1, s = 'O/W/O')
+    ax.text(40, 1.5, s = 'W/O')
+    ax.text(60, -1, s = 'W/O')
+    ax.text(90, 1.5, s = 'W/O/W')
+    
+    ax.plot((0,100), (3,3), ls = '--', c = 'g')
+    ax.plot((0,100), (2,2), ls = '--', c = 'g')
+    
+    
+    ax.plot((0,100), (-3,-3), ls = '--', c = 'g')
+    ax.plot((0,100), (-2,-2), ls = '--', c = 'g')
+    ax.plot((0,100), (HLD_val, HLD_val), ls = '-', c = 'r', linewidth = 2)
+    return fig
     

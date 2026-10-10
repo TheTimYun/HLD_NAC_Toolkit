@@ -10,7 +10,7 @@ from functions_for_surfactants import len_calculation
 EO = 'O[CH2][CH2]O'
 
 
-from functions_for_surfactants import draw_type_1, draw_type_2, draw_type_3, draw_tubes, HLD_calculation, len_calculation, xi_calculation
+from functions_for_surfactants import draw_type_1, draw_type_2, draw_type_3, draw_tubes, HLD_calculation, len_calculation, xi_calculation, draw_emulsion_plot
 
 def Cloud_point_calculation():
     st.title('Cloud point calculation for nonionic ethoxylated surfactant')
@@ -152,6 +152,46 @@ def HLD_tubes():
             fig = draw_tubes(HLDs, Sal_range, 'S')
             st.pyplot(fig)
 
+
+def Emulsion_preparation():
+    #App to find optimal combination of HLD parameters for emulsion preparation
+    st.title('Finding optimal parameters for emulsion preparation')
+    st.write('HLD calculation for given system and plotting it on the plot of emulsion type vs water content vs HLD')
+    #Selection of surfactant type, which defines coefficients for HLD calculation
+    surfactant_selection = st.selectbox('Type of surfactants', options = ('Ionic', 'Nonionic', 'Zwitterionic'))
+    #Correction for unbound counterion for ionic surfactants - 30% of counterions are unbound
+    if surfactant_selection == 'Ionic':
+        col1, col2 = st.columns(2)
+        with col1: 
+            conc = st.number_input('Enter concentration of surfactant in mol/L', value = 0.1)
+        with col2:
+            MW_counterion = st.number_input('Enter MW of counterion in g/mol', value = 23)
+        Cor = 0.3 * MW_counterion * (conc/10)
+    else:
+        Cor = 0
+        
+    #HLD property that is varied in some range
+    col1, col2, col3, col4 = st.columns(4)
+    with col1:
+        Cc = st.number_input('Enter Cc', value = 0.00)
+        st.write('Cc is {}'.format(Cc))
+    with col2:
+        Temp = st.number_input('Enter temperature', value = 25.00)
+        st.write('Temperature is {}'.format(Temp))
+    with col3:
+        Sal = st.number_input('Enter salinity, g NaCl/100 mL', value = 1.00)
+        st.write('Salinity is {}'.format(Sal))
+    with col4:
+        EACN = st.number_input('Enter EACN', value = 0.00)
+        st.write('EACN is {}'.format(EACN))
+    HLD = HLD_calculation(EACN = EACN, Cc = Cc, Sal = Sal, Temp = Temp, Type = surfactant_selection, Cor = Cor)
+    st.write('HLD for given system is {}'.format(HLD))
+    st.write('Plot below can guide you through the emulsion preparation. Detailed explanation can be found in the [book](https://www.stevenabbott.co.uk/practical-surfactants/inversion.php) by Steven Abbott. Yellow paths designate water-in-oil emulsions, whereas blue paths designate oil-in-water emulsions, triangles are transition zones. Dashed green lines designate range for optimal HLD for emulsification, which is between 2 and 3 for both poisitive and negative sides. Your calculated HLD is drawn with red line. Therefore you can track where you are in the formulation space') 
+    fig = draw_emulsion_plot(HLD)
+    st.pyplot(fig)
+
+        
+
 def Calculation_of_xi():
     #calculates xi parameter for HLD-NAC concept
     st.title('Calculation of xi parameter in HLD-NAC equation')
@@ -160,15 +200,15 @@ def Calculation_of_xi():
     col1, col2 = st.columns(2)
     with col1:
        #Select the input type - with SMILES (automatic MWt and tail length calculation) or manual input
-        type_of_input = st.selectbox('How do you want to input tail length of surfactant', options = (None, 'SMILES', 'Manual'))
+        type_of_input_tail_length = st.selectbox('How do you want to input tail length of surfactant', options = (None, 'SMILES', 'Manual'))
         if "L" not in st.session_state:
             L = None
-        if type_of_input == 'Manual':
+        if type_of_input_tail_length == 'Manual':
             L = st.slider('Select length of carbon chain in Å', 0, 100, 20)
             st.write('Tail length is {}Å'.format(L))
         #Input surfactant molecular structure (SMILES) with subsequent calculation of tail length and MWt 
-        elif type_of_input == 'SMILES':
-            smi = st.text_input('Enter SMILES of you surfactant - only surface-active part, without counterion!')
+        elif type_of_input_tail_length == 'SMILES':
+            smi = st.text_input('Enter SMILES of you surfactant - only surface-active part, without counterion!', key = 'smi')
             #transforms SMILES into RDKit mol object
             mol = Chem.MolFromSmiles(smi)
             #if molecule is valid, then calculation proceeds
@@ -179,16 +219,26 @@ def Calculation_of_xi():
                 st.image(img, smi)
         #Input of interfacial area of surfactant 
         with col2:
+            #for nonionic
             if surfactant_type == 'Nonionic':
                 type_of_input = st.selectbox('How do you want to input tail length', options = ['By number of EOs', 'Manually'])
                 if type_of_input == 'By number of EOs':
-                    n_EOs = st.number_input('Enter number of EOs', value = 10)
+                   #if smiles was used to calculate tail length it is automatically pulled to this stage
+                    if type_of_input_tail_length == 'SMILES':
+                        st.write(smi)
+                        n_EOs = len(mol.GetSubstructMatches(Chem.MolFromSmarts(EO)))
+                        st.write('Numer of EOS is ', n_EOs)
+                    else:
+                        n_EOs = st.number_input('Enter number of EOs', value = 10, key = 'n_EOs')
                     interfacial_area = 24 * (n_EOs**0.46)
-                else:
-                    interfacial_area = st.slider('Select interfacial area in Å2', 0, 200, 45)
+        
+                elif type_of_input == 'Manually':
+                    interfacial_area = st.slider('Select interfacial area in Å2', 0, 200, 45, key = 'inerfacial_area')                   
+            # for other types of surfactants
             else:
-                interfacial_area = st.slider('Select interfacial area in Å2', 0, 200, 45)
+                interfacial_area = st.slider('Select interfacial area in Å2', 0, 200, 45, key = 'inerfacial_area')
             st.write('Interfacial area is {} '.format(interfacial_area))
+            
     #Input of oil properties - moleular wight and density
     col1, col2 = st.columns(2)
     with col1:
@@ -1186,6 +1236,6 @@ def Ternary_phase_diagram():
 
 
 
-pg = st.navigation([Cloud_point_calculation, CC_mixture, Salts_additives_calculator, HLD_tubes, Calculation_of_xi, Phase_diagram, Volumes_of_phases, IFT_and_viscosity_calculation, Ternary_phase_diagram])
+pg = st.navigation([Cloud_point_calculation, CC_mixture, Salts_additives_calculator, HLD_tubes, Emulsion_preparation, Calculation_of_xi, Phase_diagram, Volumes_of_phases, IFT_and_viscosity_calculation, Ternary_phase_diagram])
 
 pg.run()

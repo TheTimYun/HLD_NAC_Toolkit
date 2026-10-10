@@ -188,4 +188,50 @@ def xi_calculation(L, interfacial_area, density, MWt, surfactant_type):
         xi = 0.4 * np.exp(6.6*OF)
         return xi
 
+
+def draw_emulsion_plot(HLD_val):
+    fig, ax = plt.subplots(1,1, figsize = (20,5))
+    ax.set_xlim(0,100)
+    ax.set_ylim(-4,4)
+    ax.set_xlabel('Water content, % wt.')
+    ax.set_ylabel('HLD')
+    ax.plot([25,25], [-4,0], c = 'k', linewidth=2)
+    ax.plot([25,75], [0,0], c = 'k', linewidth=2)
+    ax.plot([75,75], [0,4], c = 'k', linewidth=2)
+    
+    ax.plot([0,100], [0,0], linewidth=1, c = 'b', ls = '--')
+    ax.plot([20,25], [-4,0], linewidth=1, c = 'g', ls = '--')
+    ax.plot([25,30], [0,-4], linewidth=1, c = 'g', ls = '--')
+    
+    ax.plot([70,75], [4,0], linewidth=1, c = 'g', ls = '--')
+    ax.plot([75,80], [0,4], linewidth=1, c = 'g', ls = '--')
+    
+    recs = (patches.Rectangle((0,-4), width = 25, height = 4, facecolor = 'yellow', alpha = 0.2),
+           patches.Rectangle((0,0), width = 75, height = 4, facecolor = 'yellow', alpha = 0.2),
+            patches.Rectangle((25,-4), width = 75, height = 4, facecolor = 'blue', alpha = 0.2),
+           patches.Rectangle((75,0), width = 25, height = 4, facecolor = 'blue', alpha = 0.2))
+    
+    for rec in recs:
+        ax.add_patch(rec)
+    
+    tris = (patches.Polygon(np.transpose(np.array(([20, 25, 25], [-4,0,-4]))), facecolor = 'cyan', alpha = 0.5),
+           patches.Polygon(np.transpose(np.array(([25, 25, 30], [-4,0,-4]))), facecolor = 'yellow', alpha = 0.5),
+           patches.Polygon(np.transpose(np.array(([70, 75, 75], [4,0,4]))), facecolor = 'cyan', alpha = 0.5),
+           patches.Polygon(np.transpose(np.array(([75, 75, 80], [4,0,4]))), facecolor = 'yellow', alpha = 0.5))
+    for tri in tris:
+        ax.add_patch(tri)
+    
+    ax.text(10, -1, s = 'O/W/O')
+    ax.text(40, 1.5, s = 'W/O')
+    ax.text(60, -1, s = 'W/O')
+    ax.text(90, 1.5, s = 'W/O/W')
+    
+    ax.plot((0,100), (3,3), ls = '--', c = 'g')
+    ax.plot((0,100), (2,2), ls = '--', c = 'g')
+    
+    
+    ax.plot((0,100), (-3,-3), ls = '--', c = 'g')
+    ax.plot((0,100), (-2,-2), ls = '--', c = 'g')
+    ax.plot((0,100), (HLD_val, HLD_val), ls = '-', c = 'r', linewidth = 2)
+    return fig
     
